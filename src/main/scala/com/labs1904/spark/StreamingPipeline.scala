@@ -24,7 +24,12 @@ case class KafkaData(marketplace: String,
                      review_body: String,
                      review_date: String)
 
-case class HBasepostMerge(marketplace: String,
+case class HBasepostMerge(name: String,
+                          username: String,
+                          email: String,
+                          birthdate: String,
+                          sex: String,
+                          marketplace: String,
                           customer_id: String,
                           review_id: String,
                           product_id: String,
@@ -38,13 +43,8 @@ case class HBasepostMerge(marketplace: String,
                           verified_purchase: String,
                           review_headline: String,
                           review_body: String,
-                          review_date: String,
-                          email: String,
-                          name : String,
-                          birthdate : String,
-                          sex: String,
-                          username : String
-                          )
+                          review_date: String
+                         )
 
 /**
  * Spark Structured Streaming app
@@ -126,6 +126,11 @@ object StreamingPipeline {
             )
 
           HBasepostMerge(
+            name = name,
+            username = username,
+            email = email,
+            birthdate = birthdate,
+            sex = sex,
             marketplace = eachKafkaRow.marketplace,
             customer_id = eachKafkaRow.customer_id,
             review_id = eachKafkaRow.review_id,
@@ -140,24 +145,26 @@ object StreamingPipeline {
             verified_purchase = eachKafkaRow.verified_purchase,
             review_headline = eachKafkaRow.review_headline,
             review_body = eachKafkaRow.review_body,
-            review_date = eachKafkaRow.review_date,
-            email = email,
-            name = name,
-            birthdate = birthdate,
-            sex = sex,
-            username = username
+            review_date = eachKafkaRow.review_date
           )
-
-
         }).toList.iterator
         connection.close()
         iter
       }
       )
+      //write to the console
+        /*  val query = customerData.writeStream
+              .outputMode(OutputMode.Append())
+              .format("console")
+              .trigger(Trigger.ProcessingTime("5 seconds"))
+              .start() */
 
+      //write to HDFS
       val query = customerData.writeStream
         .outputMode(OutputMode.Append())
-        .format("console")
+        .format("json")
+        .option("path", "hdfs://manager.hourswith.expert:8020/user/mhart/reviews_streaming")
+        .option("checkpointLocation", "hdfs://manager.hourswith.expert:8020/user/mhart/reviews_checkpoint")
         .trigger(Trigger.ProcessingTime("5 seconds"))
         .start()
 

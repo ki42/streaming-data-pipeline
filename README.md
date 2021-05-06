@@ -23,12 +23,12 @@ loading.
 
 This project will have you
 
-1. Ingest data from a "reviews" Kafka topic.
+//1. Ingest data from a "reviews" Kafka topic.
 //2. Parse the comma separated values into a Review scala case class
 //3. Extract the userId from the Review object.
 //4. Use the userId to lookup the corresponding user data in HBase.
 //5. Join the review data with the user data.
-//6. Save this combined result in hdfs
+6. Save this combined result in hdfs
 //7. Setup a Hive Table that points to the enriched result stored in HDFS
 
 ### Slides Accompanying the instructions
