@@ -15,7 +15,7 @@ case class KafkaData(marketplace: String,
                      product_parent: String,
                      product_title: String,
                      product_category: String,
-                     star_rating: String, //int later?
+                     star_rating: String,
                      helpful_votes: String,
                      total_votes: String,
                      vine: String,
@@ -36,7 +36,7 @@ case class HBasepostMerge(name: String,
                           product_parent: String,
                           product_title: String,
                           product_category: String,
-                          star_rating: String, //int later?
+                          star_rating: String,
                           helpful_votes: String,
                           total_votes: String,
                           vine: String,
@@ -57,7 +57,7 @@ object StreamingPipeline {
   def main(args: Array[String]): Unit = {
 
     try {
-      val spark = SparkSession.builder().appName(jobName).master("local[*]").getOrCreate()
+      val spark = SparkSession.builder().config("spark.hadoop.dfs.client.use.datanode.hostname", "true").config("spark.hadoop.fs.defaultFS", "hdfs://manager.hourswith.expert:8020").appName(jobName).master("local[*]").getOrCreate()
       val bootstrapServers = "35.239.241.212:9092,35.239.230.132:9092,34.69.66.216:9092"
 
       import spark.implicits._
